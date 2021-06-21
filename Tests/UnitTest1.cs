@@ -13,9 +13,10 @@ namespace Tests
         [TestCase("3.3-4.4", -1.1f)]
         [TestCase("5.5*6.6", 36.3f)]
         [TestCase("7.7/8.8", 0.875f)]
+        [TestCase("-1-2", -3f)]
         public void Simple(string expression, float result)
         {
-            float countResult = Program.CountResult(expression);
+            var countResult = Program.CountResult(expression);
             Assert.That(countResult, Is.EqualTo(result));
         }
 
@@ -33,7 +34,7 @@ namespace Tests
         [TestCase("1/2-7", -6.5f)]
         public void TwoOperations(string expression, float result)
         {
-            float countResult = Program.CountResult(expression);
+            var countResult = Program.CountResult(expression);
             Assert.That(countResult, Is.EqualTo(result));
         }
 
@@ -55,15 +56,41 @@ namespace Tests
         [TestCase("1/2*4*7/8", 1.75f)]
         public void FourOperations(string expression, float result)
         {
-            float countResult = Program.CountResult(expression);
+            var countResult = Program.CountResult(expression);
             Assert.That(countResult, Is.EqualTo(result));
         }
 
-        [TestCase("1/2*4*7/8", 1.75f)]
+        [TestCase("2/2*4*7/8-6+5*60/10-20+40*5*2*10-80/20/10", 4007.1f)]
+        [TestCase("1-1*20*5-80-2+20+10-80/100/2*100*20", -951f)]
         public void ComplexOperations(string expression, float result)
         {
-            float countResult = Program.CountResult(expression);
+            var countResult = Program.CountResult(expression);
             Assert.That(countResult, Is.EqualTo(result));
+        }
+
+        [TestCase("(1-1*20*5-80)-2+20+10-80/100/2*100*20", -951f)]
+        [TestCase("((1-1*20)*5-80)-2+20+10-80/100/2*100*20", -947f)]
+        [TestCase("(1-1*(20*5-80))-2+20+10-80/100/2*100*20", -791f)]
+        [TestCase("(1-1*20*5-80)-(2+20+10-80/100)/2*100*20", -31379f)]
+        [TestCase("((1-1*20*5-80)-2+20+10-80/100)/2*100*20", -151800f)]
+        [TestCase("(1-1*20*5-80)-2+20+(10-(80/100)/2*100*20)", -951f)]
+        public void BracketsOperations(string expression, float result)
+        {
+            var countResult = Program.CountResult(expression);
+            Assert.That(countResult, Is.EqualTo(result));
+        }
+
+        //exception test
+        [TestCase("(1-1*20*5-80-2+20+(10-(80/100)/2*100*20)", "BracketException")]
+        [TestCase("(1-1*20*5-80)-2+20+(10-80/100)/2*100*20)", "BracketException")]
+        [TestCase("abc", "SymbolException")]
+        [TestCase("1a*2*4+7*8", "SymbolException")]
+        [TestCase("1.*2*4+7*8", "Exception")]
+        [TestCase("1*2*4++7*8", "Exception")]
+        public void WrongExpression(string expression, string exception)
+        {
+            var countResult = Program.CountResult(expression);
+            Assert.That(countResult, Is.EqualTo(exception));
         }
     }
 }
