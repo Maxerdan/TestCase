@@ -10,13 +10,14 @@ namespace Testovoe
     {
         static void Main(string[] args)
         {
-            while (true)
+            do
             {
-                var expressionToCount = Console.ReadLine();
-                Console.WriteLine(Calculate(expressionToCount));
-                Console.ReadKey();
                 Console.Clear();
+                Console.WriteLine("Input your expression below and press enter to calculate:");
+                var expressionToCount = Console.ReadLine();
+                Console.WriteLine("Result: " + Calculate(expressionToCount) + "\nPress enter to calculate again or escape to exit");
             }
+            while (Console.ReadKey().Key != ConsoleKey.Escape);
         }
 
         public static float Calculate(string expression)
