@@ -10,8 +10,13 @@ namespace Testovoe
     {
         static void Main(string[] args)
         {
-            var expressionToCount = Console.ReadLine();
-            Calculate(expressionToCount);
+            while (true)
+            {
+                var expressionToCount = Console.ReadLine();
+                Console.WriteLine(Calculate(expressionToCount));
+                Console.ReadKey();
+                Console.Clear();
+            }
         }
 
         public static float Calculate(string expression)
@@ -20,24 +25,27 @@ namespace Testovoe
             Stack<Entity> operations = new Stack<Entity>();
 
             ParseExpression(expression, nums, operations);
-            DoOperations(nums, operations);
+            while (operations.Count != 0)
+                DoOperation(nums, operations);
 
-            return (float)Math.Round(nums.Pop().Value, 4); // test round
+            return (float)Math.Round(nums.Pop().Value, 4);
         }
 
         private static void ParseExpression(string expression, Stack<Entity> nums, Stack<Entity> operations)
         {
             Entity entity;
+            bool unaryOpFlag = false;
 
             // need to check expression
 
             for (var i = 0; i < expression.Length; i++)
             {
                 entity = new Entity();
-                if (expression[i].IsNum()) // num
+                if (expression[i].IsNum() || expression[i] == '-' && !unaryOpFlag) // num
                 {
                     string num = expression[i].ToString();
-                    while (expression.Length != i + 1 && !expression[i + 1].IsOperation())
+                    unaryOpFlag = true;
+                    while (expression.Length != i + 1 && !expression[i + 1].IsOperation(unaryOpFlag))
                     {
                         if (expression[i + 1].IsNum() || expression[i + 1] == '.')
                         {
@@ -50,11 +58,25 @@ namespace Testovoe
                     entity.Value = float.Parse(num.Replace('.', ','));
                     nums.Push(entity);
                 }
-                else if (expression[i].IsOperation()) // operation
+                else if (expression[i].IsOperation(unaryOpFlag)) // operation
                 {
-                    entity.Type = expression[i];
-                    entity.Value = 0;
-                    operations.Push(entity);
+                    if (operations.Count == 0)
+                    {
+                        entity.Type = expression[i];
+                        entity.Value = 0;
+                        operations.Push(entity);
+                    }
+                    else if (operations.Count != 0 && GetRang(expression[i]) > GetRang(operations.Peek().Type))
+                    {
+                        entity.Type = expression[i];
+                        entity.Value = 0;
+                        operations.Push(entity);
+                    }
+                    else if (operations.Count != 0 && GetRang(expression[i]) <= GetRang(operations.Peek().Type))
+                    {
+                        DoOperation(nums, operations);
+                        i--;
+                    }
                 }
                 else // exception
                 {
@@ -63,7 +85,7 @@ namespace Testovoe
             }
         }
 
-        private static void DoOperations(Stack<Entity> nums, Stack<Entity> operations)
+        private static void DoOperation(Stack<Entity> nums, Stack<Entity> operations)
         {
             Entity entity;
             float a, b, c;
@@ -111,9 +133,16 @@ namespace Testovoe
             }
         }
 
-        private static bool IsOperation(this char sym)
+        static int GetRang(char sym)
         {
-            return sym == '+' || sym == '-' || sym == '*' || sym == '/';
+            if (sym == '+' || sym == '-') return 1;
+            if (sym == '*' || sym == '/') return 2;
+            return 0;
+        }
+
+        private static bool IsOperation(this char sym, bool unaryOpFlag)
+        {
+            return sym == '+' || sym == '-' && unaryOpFlag || sym == '*' || sym == '/';
         }
         private static bool IsNum(this char sym)
         {

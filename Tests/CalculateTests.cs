@@ -51,7 +51,7 @@ namespace Tests
         [TestCase("1-2+4/8+8", 7.5f)]
         [TestCase("1-2/4/8+8", 8.9375f)]
         [TestCase("1-2+4/8/8", -0.9375f)]
-        [TestCase("1/2/4/8-8", -7.984375f)]
+        [TestCase("1/2/4/8-8", -7.9844f)]
         [TestCase("1/2*4/8-8", -7.75f)]
         [TestCase("1/2*4*7/8", 1.75f)]
         public void FourOperations(string expression, float result)
