@@ -47,6 +47,8 @@ namespace Testovoe
                     unaryOpFlag = true;
                     while (expression.Length != i + 1 && !expression[i + 1].IsOperation(unaryOpFlag))
                     {
+                        if (expression[i + 1] == ')')
+                            break;
                         if (expression[i + 1].IsNum() || expression[i + 1] == '.')
                         {
                             num += expression[i + 1];
@@ -77,6 +79,20 @@ namespace Testovoe
                         DoOperation(nums, operations);
                         i--;
                     }
+                }
+                else if (expression[i] == '(')
+                {
+                    entity.Type = expression[i];
+                    entity.Value = 0;
+                    operations.Push(entity);
+                }
+                else if (expression[i] == ')')
+                {
+                    while (operations.Peek().Type != '(')
+                    {
+                        DoOperation(nums, operations);
+                    }
+                    operations.Pop();
                 }
                 else // exception
                 {

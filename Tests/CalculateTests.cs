@@ -68,6 +68,8 @@ namespace Tests
             Assert.That(countResult, Is.EqualTo(result));
         }
 
+        [TestCase("(20+10)*5", 150f)]
+        [TestCase("(2+((20+10)*5)*2)-2", 300f)]
         [TestCase("(1-1*20*5-80)-2+20+10-80/100/2*100*20", -951f)]
         [TestCase("((1-1*20)*5-80)-2+20+10-80/100/2*100*20", -947f)]
         [TestCase("(1-1*(20*5-80))-2+20+10-80/100/2*100*20", -791f)]
@@ -85,8 +87,11 @@ namespace Tests
         [TestCase("(1-1*20*5-80)-2+20+(10-80/100)/2*100*20)", "BracketException")]
         [TestCase("abc", "SymbolException")]
         [TestCase("1a*2*4+7*8", "SymbolException")]
-        [TestCase("1.*2*4+7*8", "Exception")]
+        [TestCase("1.*2*4+7*8", "OperationException")]
         [TestCase("1*2*4++7*8", "Exception")]
+        [TestCase("1*2*4++7******8", "OperationException")]
+        [TestCase("1.....1..2..*2*4++7******8", "NumberException")]
+        [TestCase("123+123+", "OperationException")]
         public void WrongExpression(string expression, string exception)
         {
             var countResult = Program.Calculate(expression);
