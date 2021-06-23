@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Testovoe
 {
@@ -14,30 +11,40 @@ namespace Testovoe
             {
                 Console.Clear();
                 Console.WriteLine("Input your expression below and press enter to calculate:");
-                var expressionToCount = Console.ReadLine();
-                Console.WriteLine("Result: " + Calculate(expressionToCount) + "\nPress enter to calculate again or escape to exit");
+                var expressionToCalculate = Console.ReadLine();
+
+                Console.WriteLine("\nResult:\n" + Calculate(expressionToCalculate) + "\nPress enter to calculate again or escape to exit");
             }
             while (Console.ReadKey().Key != ConsoleKey.Escape);
         }
 
-        public static float Calculate(string expression)
+        public static string Calculate(string expression)
         {
             Stack<Entity> nums = new Stack<Entity>();
             Stack<Entity> operations = new Stack<Entity>();
 
-            ParseExpression(expression, nums, operations);
+            var parseException = ParseExpression(expression, nums, operations);
+            if (parseException != "")
+                return parseException;
             while (operations.Count != 0)
-                DoOperation(nums, operations);
+            {
+                var operationException = DoOperation(nums, operations);
+                if (operationException != "")
+                    return operationException;
+            }
 
-            return (float)Math.Round(nums.Pop().Value, 4);
+            return Math.Round(nums.Pop().Value, 4).ToString();
         }
 
-        private static void ParseExpression(string expression, Stack<Entity> nums, Stack<Entity> operations)
+        private static string ParseExpression(string expression, Stack<Entity> nums, Stack<Entity> operations)
         {
             Entity entity;
             bool unaryOpFlag = false;
+            expression = expression.Replace(" ", "");
 
-            // need to check expression
+            var exceptions = Exceptions.CheckForExceptions(expression);
+            if (exceptions != "")
+                return exceptions;
 
             for (var i = 0; i < expression.Length; i++)
             {
@@ -77,7 +84,9 @@ namespace Testovoe
                     }
                     else if (operations.Count != 0 && GetRang(expression[i]) <= GetRang(operations.Peek().Type))
                     {
-                        DoOperation(nums, operations);
+                        var operationException = DoOperation(nums, operations);
+                        if (operationException != "")
+                            return operationException;
                         i--;
                     }
                 }
@@ -91,66 +100,63 @@ namespace Testovoe
                 {
                     while (operations.Peek().Type != '(')
                     {
-                        DoOperation(nums, operations);
+                        var operationException = DoOperation(nums, operations);
+                        if (operationException != "")
+                            return operationException;
                     }
                     operations.Pop();
                 }
                 else // exception
                 {
-                    throw new Exception("Exception");
+                    return $"Exception! - Wrong symbol (not number or operating): {expression[i]}";
                 }
             }
+
+            return ""; // no exceptions
         }
 
-        private static void DoOperation(Stack<Entity> nums, Stack<Entity> operations)
+        private static string DoOperation(Stack<Entity> nums, Stack<Entity> operations)
         {
-            Entity entity;
+            Entity entity = new Entity(); ;
             float a, b, c;
             a = nums.Pop().Value;
-            entity = new Entity();
+            b = nums.Pop().Value;
+
             switch (operations.Pop().Type)
             {
                 case '+':
                     {
-                        b = nums.Pop().Value;
                         c = a + b;
-                        entity.Type = '0';
-                        entity.Value = c;
-                        nums.Push(entity);
                         break;
                     }
                 case '-':
                     {
-                        b = nums.Pop().Value;
                         c = b - a;
-                        entity.Type = '0';
-                        entity.Value = c;
-                        nums.Push(entity);
                         break;
                     }
                 case '*':
                     {
-                        b = nums.Pop().Value;
                         c = a * b;
-                        entity.Type = '0';
-                        entity.Value = c;
-                        nums.Push(entity);
                         break;
                     }
                 case '/':
                     {
-                        b = nums.Pop().Value;
-                        //check for /0
+                        if (a == 0)
+                            return "Exception! - Division by zero";
                         c = b / a;
-                        entity.Type = '0';
-                        entity.Value = c;
-                        nums.Push(entity);
                         break;
                     }
+                default:
+                    return "UnexpectableException!";
             }
+            entity.Type = '0';
+            entity.Value = c;
+            nums.Push(entity);
+
+            return ""; // no exceptions
         }
 
-        static int GetRang(char sym)
+        private static int GetRang(char sym)
         {
             if (sym == '+' || sym == '-') return 1;
             if (sym == '*' || sym == '/') return 2;
@@ -161,6 +167,7 @@ namespace Testovoe
         {
             return sym == '+' || sym == '-' && unaryOpFlag || sym == '*' || sym == '/';
         }
+
         private static bool IsNum(this char sym)
         {
             return char.IsDigit(sym);
