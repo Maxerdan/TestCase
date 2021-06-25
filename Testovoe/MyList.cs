@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Testovoe
 {
-    class MyList<T> : IList<T>
+    public class MyList<T> : IList<T>
     {
         private T[] _contents;
         private int _count;
@@ -59,7 +59,7 @@ namespace Testovoe
 
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            return new MyListEntity<T>(_contents, _count);
         }
 
         public int IndexOf(T item)
@@ -120,7 +120,7 @@ namespace Testovoe
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return GetEnumerator();
         }
 
         private void IncreaseContentSize()
@@ -143,6 +143,52 @@ namespace Testovoe
             {
                 _contents[i] = contentsTemp[i];
             }
+        }
+    }
+
+    public class MyListEntity<T> : IEnumerator<T>
+    {
+        private T[] _contents;
+        private int _position;
+        private int _count;
+        private bool IsDisposed = false;
+
+        public MyListEntity(T[] contents, int count)
+        {
+            _contents = contents;
+            _position = -1;
+            _count = count;
+        }
+
+        public T Current => _contents[_position];
+
+        object IEnumerator.Current => _contents[_position];
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public bool MoveNext()
+        {
+            _position++;
+            return (_position < _count);
+        }
+
+        public void Reset()
+        {
+            _position = -1;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (IsDisposed) return;
+            if (disposing)
+            {
+                _contents = null;
+            }
+            IsDisposed = true;
         }
     }
 }
