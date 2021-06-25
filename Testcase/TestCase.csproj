@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{819433D0-DBC8-4223-BFB6-0A5FCF0FF1CD}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Testovoe</RootNamespace>
-    <AssemblyName>Testovoe</AssemblyName>
+    <RootNamespace>Testcase</RootNamespace>
+    <AssemblyName>Testcase</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -52,6 +52,7 @@
     <Compile Include="Entity.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="MyList.cs" />
+    <Compile Include="MyListEntity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Testovoe
+namespace Testcase
 {
     public static class Program
     {

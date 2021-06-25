@@ -1,4 +1,4 @@
-﻿namespace Testovoe
+﻿namespace Testcase
 {
     struct Entity
     {
