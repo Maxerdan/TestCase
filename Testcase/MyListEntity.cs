@@ -8,7 +8,7 @@ namespace Testcase
     {
         private T[] _items;
         private int _position;
-        private int _count;
+        private readonly int _count;
         private bool IsDisposed = false;
 
         public MyListEntity(T[] contents, int count)

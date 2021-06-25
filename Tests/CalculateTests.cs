@@ -16,7 +16,7 @@ namespace Tests
         [TestCase("-1-2", -3f)]
         public void Simple(string expression, float result)
         {
-            var countResult = Program.Calculate(expression);
+            var countResult = Calculator.Calculate(expression);
             Assert.That(float.Parse(countResult), Is.EqualTo(result));
         }
 
@@ -34,7 +34,7 @@ namespace Tests
         [TestCase("1/2-7", -6.5f)]
         public void TwoOperations(string expression, float result)
         {
-            var countResult = Program.Calculate(expression);
+            var countResult = Calculator.Calculate(expression);
             Assert.That(float.Parse(countResult), Is.EqualTo(result));
         }
 
@@ -56,7 +56,7 @@ namespace Tests
         [TestCase("1/2*4*7/8", 1.75f)]
         public void FourOperations(string expression, float result)
         {
-            var countResult = Program.Calculate(expression);
+            var countResult = Calculator.Calculate(expression);
             Assert.That(float.Parse(countResult), Is.EqualTo(result));
         }
 
@@ -64,7 +64,7 @@ namespace Tests
         [TestCase("1-1*20*5-80-2+20+10-80/100/2*100*20", -951f)]
         public void ComplexOperations(string expression, float result)
         {
-            var countResult = Program.Calculate(expression);
+            var countResult = Calculator.Calculate(expression);
             Assert.That(float.Parse(countResult), Is.EqualTo(result));
         }
 
@@ -79,7 +79,7 @@ namespace Tests
         [TestCase("(1-1*20*5-80)-2+20+(10-(80/100)/2*100*20)", -951f)]
         public void BracketsOperations(string expression, float result)
         {
-            var countResult = Program.Calculate(expression);
+            var countResult = Calculator.Calculate(expression);
             Assert.That(float.Parse(countResult), Is.EqualTo(result));
         }
 
@@ -96,7 +96,7 @@ namespace Tests
         [TestCase("1*2*4+7*8.", "EndException")]
         public void WrongExpression(string expression, string exception)
         {
-            var countResult = Program.Calculate(expression);
+            var countResult = Calculator.Calculate(expression);
             Assert.That(countResult.Contains(exception));
         }
     }
