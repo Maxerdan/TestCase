@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Entity.cs" />
     <Compile Include="Exceptions.cs" />
+    <Compile Include="MyList.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

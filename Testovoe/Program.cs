@@ -33,7 +33,10 @@ namespace Testovoe
                     return operationException;
             }
 
-            return Math.Round(nums.Pop().Value, 4).ToString();
+            if (nums.Count == 1)
+                return Math.Round(nums.Pop().Value, 4).ToString();
+            else
+                return "Exception! - No numbers in expression";
         }
 
         private static string ParseExpression(string expression, Stack<Entity> nums, Stack<Entity> operations)
@@ -49,10 +52,13 @@ namespace Testovoe
             for (var i = 0; i < expression.Length; i++)
             {
                 entity = new Entity();
+                if (operations.Count > 0 && expression[i - 1] == '(' && expression[i] == '-')
+                    unaryOpFlag = false;
                 if (expression[i].IsNum() || expression[i] == '-' && !unaryOpFlag) // num
                 {
-                    string num = expression[i].ToString();
                     unaryOpFlag = true;
+                    string num = expression[i].ToString();
+
                     while (expression.Length != i + 1 && !expression[i + 1].IsOperation(unaryOpFlag))
                     {
                         if (expression[i + 1] == ')')
