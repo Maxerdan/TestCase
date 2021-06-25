@@ -5,35 +5,45 @@ namespace Testcase
 {
     public static class Calculator
     {
-        public static string Calculate(string expression)
+        public static float Calculate(string expression)
         {
             var nums = new Stack<float>();
             var operations = new Stack<char>();
 
-            var parseException = ParseExpression(expression, nums, operations);
-            if (parseException != "")
-                return parseException;
-            while (operations.Count != 0)
+            try
             {
-                var operationException = DoOperation(nums, operations);
-                if (operationException != "")
-                    return operationException;
+                ParseExpression(expression, nums, operations);
+                while (operations.Count != 0)
+                {
+                    DoOperation(nums, operations);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw new Exception(e.Message);
             }
 
             if (nums.Count == 1)
-                return Math.Round(nums.Pop(), 4).ToString();
+                return float.Parse(Math.Round(nums.Pop(), 4).ToString());
             else
-                return "Exception! - No numbers in expression";
+                throw new Exception("Exception! - No numbers in expression");
         }
 
-        private static string ParseExpression(string expression, Stack<float> nums, Stack<char> operations)
+        private static void ParseExpression(string expression, Stack<float> nums, Stack<char> operations)
         {
             bool unaryOpFlag = false;
             expression = expression.Replace(" ", "");
 
-            var exceptions = Exceptions.CheckForExceptions(expression);
-            if (exceptions != "")
-                return exceptions;
+            try
+            {
+                Exceptions.CheckForExceptions(expression);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw new Exception(e.Message);
+            }
 
             for (var i = 0; i < expression.Length; i++)
             {
@@ -70,10 +80,16 @@ namespace Testcase
                     }
                     else if (operations.Count != 0 && GetRang(expression[i]) <= GetRang(operations.Peek()))
                     {
-                        var operationException = DoOperation(nums, operations);
-                        if (operationException != "")
-                            return operationException;
-                        i--;
+                        try
+                        {
+                            DoOperation(nums, operations);
+                            i--;
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                            return;
+                        }
                     }
                 }
                 else if (expression[i] == '(')
@@ -84,22 +100,26 @@ namespace Testcase
                 {
                     while (operations.Peek() != '(')
                     {
-                        var operationException = DoOperation(nums, operations);
-                        if (operationException != "")
-                            return operationException;
+                        try
+                        {
+                            DoOperation(nums, operations);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                            return;
+                        }
                     }
                     operations.Pop();
                 }
-                else // exception
+                else
                 {
-                    return $"Exception! - Wrong symbol (not number or operating): {expression[i]}";
+                    throw new Exception($"Exception! - Wrong symbol (not number or operating): {expression[i]}");
                 }
             }
-
-            return ""; // no exceptions
         }
 
-        private static string DoOperation(Stack<float> nums, Stack<char> operations)
+        private static void DoOperation(Stack<float> nums, Stack<char> operations)
         {
             float a, b, c;
             a = nums.Pop();
@@ -125,16 +145,14 @@ namespace Testcase
                 case '/':
                     {
                         if (a == 0)
-                            return "Exception! - Division by zero";
+                            throw new DivideByZeroException("Exception! - Division by zero");
                         c = b / a;
                         break;
                     }
                 default:
-                    return "UnexpectableException!";
+                    throw new Exception("UnexpectableException!");
             }
             nums.Push(c);
-
-            return ""; // no exceptions
         }
 
         private static int GetRang(char sym)

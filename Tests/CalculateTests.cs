@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 using Testcase;
 
 namespace Tests
@@ -17,7 +18,7 @@ namespace Tests
         public void Simple(string expression, float result)
         {
             var countResult = Calculator.Calculate(expression);
-            Assert.That(float.Parse(countResult), Is.EqualTo(result));
+            Assert.That(countResult, Is.EqualTo(result));
         }
 
         [TestCase("1+2-7", -4f)]
@@ -35,7 +36,7 @@ namespace Tests
         public void TwoOperations(string expression, float result)
         {
             var countResult = Calculator.Calculate(expression);
-            Assert.That(float.Parse(countResult), Is.EqualTo(result));
+            Assert.That(countResult, Is.EqualTo(result));
         }
 
         [TestCase("1+2+4+7+8", 22f)]
@@ -57,7 +58,7 @@ namespace Tests
         public void FourOperations(string expression, float result)
         {
             var countResult = Calculator.Calculate(expression);
-            Assert.That(float.Parse(countResult), Is.EqualTo(result));
+            Assert.That(countResult, Is.EqualTo(result));
         }
 
         [TestCase("2/2*4*7/8-6+5*60/10-20+40*5*2*10-80/20/10", 4007.1f)]
@@ -65,7 +66,7 @@ namespace Tests
         public void ComplexOperations(string expression, float result)
         {
             var countResult = Calculator.Calculate(expression);
-            Assert.That(float.Parse(countResult), Is.EqualTo(result));
+            Assert.That(countResult, Is.EqualTo(result));
         }
 
         [TestCase("(20+10)*5", 150f)]
@@ -80,7 +81,7 @@ namespace Tests
         public void BracketsOperations(string expression, float result)
         {
             var countResult = Calculator.Calculate(expression);
-            Assert.That(float.Parse(countResult), Is.EqualTo(result));
+            Assert.That(countResult, Is.EqualTo(result));
         }
 
         //exception test
@@ -88,7 +89,7 @@ namespace Tests
         [TestCase("(1-1*20*5-80)-2+20+(10-80/100)/2*100*20)", "BracketsException")]
         [TestCase("abc", "ParseException")]
         [TestCase("1a*2*4+7*8", "ParseException")]
-        [TestCase("1.*2*4+7*8", "ParseException")]
+        [TestCase("1.*2*4+7*8", "OperationException")]
         [TestCase("1*2*4++7*8", "OperationException")]
         [TestCase("1*2*4++7******8", "OperationException")]
         [TestCase("1.....1..2..*2*4++7******8", "OperationException")]
@@ -96,8 +97,15 @@ namespace Tests
         [TestCase("1*2*4+7*8.", "EndException")]
         public void WrongExpression(string expression, string exception)
         {
-            var countResult = Calculator.Calculate(expression);
-            Assert.That(countResult.Contains(exception));
+            try
+            {
+                var countResult = Calculator.Calculate(expression);
+                Assert.Fail();
+            }
+            catch(Exception e)
+            {
+                Assert.That(e.Message.Contains(exception));
+            }
         }
     }
 }
