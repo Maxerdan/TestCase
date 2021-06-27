@@ -16,10 +16,10 @@ namespace Testcase
                 DoOperation(nums, operations);
             }
 
-            if (nums.Count == 1)
+            if (nums.Count == 1 && operations.Count == 0)
                 return float.Parse(Math.Round(nums.Pop(), 4).ToString());
             else
-                throw new Exception("Exception! - No numbers in expression");
+                throw new Exception("Exception! - Missing num or operation");
         }
 
         private static void ParseExpression(string expression, Stack<float> nums, Stack<char> operations)
@@ -78,7 +78,7 @@ namespace Testcase
 
             while (expression.Length != i + 1 && !expression[i + 1].IsOperation(unaryOpFlag))
             {
-                if (expression[i + 1] == ')')
+                if (expression[i + 1] == ')' || expression[i + 1] == '(')
                     break;
                 if (char.IsDigit(expression[i + 1]) || expression[i + 1] == '.')
                 {
