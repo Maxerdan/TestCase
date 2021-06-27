@@ -24,70 +24,87 @@ namespace Testcase
 
         private static void ParseExpression(string expression, Stack<float> nums, Stack<char> operations)
         {
-            bool unaryOpFlag = false;
+            bool unaryOpFlag = true;
             expression = expression.Replace(" ", "");
 
             Exceptions.CheckForExceptions(expression);
 
             for (var i = 0; i < expression.Length; i++)
             {
-                if (operations.Count > 0 && expression[i - 1] == '(' && expression[i] == '-')
-                    unaryOpFlag = false;
-                if (expression[i].IsNum() || expression[i] == '-' && !unaryOpFlag) // num
-                {
+                if (IsUnaryBracket(expression, operations, i))
                     unaryOpFlag = true;
-                    string num = expression[i].ToString();
 
-                    while (expression.Length != i + 1 && !expression[i + 1].IsOperation(unaryOpFlag))
-                    {
-                        if (expression[i + 1] == ')')
-                            break;
-                        if (expression[i + 1].IsNum() || expression[i + 1] == '.')
-                        {
-                            num += expression[i + 1];
-                        }
-
-                        i++;
-                    }
-                    var number = float.Parse(num.Replace('.', ','));
-                    nums.Push(number);
-                }
-                else if (expression[i].IsOperation(unaryOpFlag)) // operation
+                if (char.IsDigit(expression[i]) || expression[i] == '-' && unaryOpFlag) // num
                 {
-                    if (operations.Count == 0)
-                    {
-                        operations.Push(expression[i]);
-                    }
-                    else if (operations.Count != 0 && GetRang(expression[i]) > GetRang(operations.Peek()))
-                    {
-                        operations.Push(expression[i]);
-                    }
-                    else if (operations.Count != 0 && GetRang(expression[i]) <= GetRang(operations.Peek()))
-                    {
-
-                        DoOperation(nums, operations);
-                        i--;
-
-                    }
+                    unaryOpFlag = false;
+                    ReadNum(expression, nums, unaryOpFlag, ref i);
+                    continue;
                 }
-                else if (expression[i] == '(')
+
+                if (expression[i].IsOperation(unaryOpFlag)) // operation
+                {
+                    ReadOperation(expression, nums, operations, ref i);
+                    continue;
+                }
+
+                if (expression[i] == '(')
                 {
                     operations.Push(expression[i]);
+                    continue;
                 }
-                else if (expression[i] == ')')
+
+                if (expression[i] == ')')
                 {
                     while (operations.Peek() != '(')
                     {
-
                         DoOperation(nums, operations);
-
                     }
                     operations.Pop();
+                    continue;
                 }
-                else
+
+                throw new Exception($"Exception! - Wrong symbol (not number or operating): {expression[i]}");
+            }
+        }
+
+        private static bool IsUnaryBracket(string expression, Stack<char> operations, int i)
+        {
+            return operations.Count > 0 && expression[i - 1] == '(' && expression[i] == '-';
+        }
+
+        private static void ReadNum(string expression, Stack<float> nums, bool unaryOpFlag, ref int i)
+        {
+            string num = expression[i].ToString();
+
+            while (expression.Length != i + 1 && !expression[i + 1].IsOperation(unaryOpFlag))
+            {
+                if (expression[i + 1] == ')')
+                    break;
+                if (char.IsDigit(expression[i + 1]) || expression[i + 1] == '.')
                 {
-                    throw new Exception($"Exception! - Wrong symbol (not number or operating): {expression[i]}");
+                    num += expression[i + 1];
                 }
+
+                i++;
+            }
+            var number = float.Parse(num.Replace('.', ','));
+            nums.Push(number);
+        }
+
+        private static void ReadOperation(string expression, Stack<float> nums, Stack<char> operations, ref int i)
+        {
+            if (operations.Count == 0)
+            {
+                operations.Push(expression[i]);
+            }
+            else if (GetRang(expression[i]) > GetRang(operations.Peek()))
+            {
+                operations.Push(expression[i]);
+            }
+            else if (GetRang(expression[i]) <= GetRang(operations.Peek()))
+            {
+                DoOperation(nums, operations);
+                i--;
             }
         }
 
@@ -136,12 +153,7 @@ namespace Testcase
 
         private static bool IsOperation(this char sym, bool unaryOpFlag)
         {
-            return sym == '+' || sym == '-' && unaryOpFlag || sym == '*' || sym == '/';
-        }
-
-        private static bool IsNum(this char sym)
-        {
-            return char.IsDigit(sym);
+            return sym == '+' || sym == '-' && !unaryOpFlag || sym == '*' || sym == '/';
         }
     }
 }
