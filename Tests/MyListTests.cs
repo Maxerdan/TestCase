@@ -1,13 +1,12 @@
 ﻿using NUnit.Framework;
 using Testcase;
-using System.Linq;
 
 namespace Tests
 {
     class MyListTests
     {
         [Test]
-        public void Size()
+        public void Simple()
         {
             MyList<int> myList = new MyList<int>();
 

@@ -10,18 +10,10 @@ namespace Testcase
             var nums = new Stack<float>();
             var operations = new Stack<char>();
 
-            try
+            ParseExpression(expression, nums, operations);
+            while (operations.Count != 0)
             {
-                ParseExpression(expression, nums, operations);
-                while (operations.Count != 0)
-                {
-                    DoOperation(nums, operations);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                throw new Exception(e.Message);
+                DoOperation(nums, operations);
             }
 
             if (nums.Count == 1)
@@ -35,15 +27,7 @@ namespace Testcase
             bool unaryOpFlag = false;
             expression = expression.Replace(" ", "");
 
-            try
-            {
-                Exceptions.CheckForExceptions(expression);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                throw new Exception(e.Message);
-            }
+            Exceptions.CheckForExceptions(expression);
 
             for (var i = 0; i < expression.Length; i++)
             {
@@ -80,16 +64,10 @@ namespace Testcase
                     }
                     else if (operations.Count != 0 && GetRang(expression[i]) <= GetRang(operations.Peek()))
                     {
-                        try
-                        {
-                            DoOperation(nums, operations);
-                            i--;
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.Message);
-                            return;
-                        }
+
+                        DoOperation(nums, operations);
+                        i--;
+
                     }
                 }
                 else if (expression[i] == '(')
@@ -100,15 +78,9 @@ namespace Testcase
                 {
                     while (operations.Peek() != '(')
                     {
-                        try
-                        {
-                            DoOperation(nums, operations);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.Message);
-                            return;
-                        }
+
+                        DoOperation(nums, operations);
+
                     }
                     operations.Pop();
                 }

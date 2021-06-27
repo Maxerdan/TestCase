@@ -26,6 +26,11 @@ namespace Testcase
                 }
             }
 
+            CheckBrackets(expression);
+        }
+
+        private static void CheckBrackets(string expression)
+        {
             int leftBracketsCount = expression.Count(x => x == '(');
             int rightBracketsCount = expression.Count(x => x == ')');
             if (leftBracketsCount != rightBracketsCount)
