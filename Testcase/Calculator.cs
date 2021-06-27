@@ -34,14 +34,14 @@ namespace Testcase
                 if (IsUnaryBracket(expression, operations, i))
                     unaryOpFlag = true;
 
-                if (char.IsDigit(expression[i]) || expression[i] == '-' && unaryOpFlag) // num
+                if (char.IsDigit(expression[i]) || expression[i] == '-' && unaryOpFlag)
                 {
                     unaryOpFlag = false;
                     ReadNum(expression, nums, unaryOpFlag, ref i);
                     continue;
                 }
 
-                if (expression[i].IsOperation(unaryOpFlag)) // operation
+                if (expression[i].IsOperation(unaryOpFlag))
                 {
                     ReadOperation(expression, nums, operations, ref i);
                     continue;
