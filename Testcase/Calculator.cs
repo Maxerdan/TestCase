@@ -26,6 +26,7 @@ namespace Testcase
         {
             bool unaryOpFlag = true;
             expression = expression.Replace(" ", "");
+            expression = expression.Replace(",", ".");
 
             Exceptions.CheckForExceptions(expression);
 

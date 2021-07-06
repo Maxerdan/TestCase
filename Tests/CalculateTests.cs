@@ -95,6 +95,10 @@ namespace Tests
         [TestCase("1.....1..2..*2*4++7******8", "OperationException")]
         [TestCase("123+123+", "EndException")]
         [TestCase("1*2*4+7*8.", "EndException")]
+        [TestCase("1/0", "Exception! - Division by zero")]
+        [TestCase("1+()1", "Exception!")]
+        [TestCase("1+30()", "Exception!")]
+        [TestCase("1+()", "Exception!")]
         public void WrongExpression(string expression, string exception)
         {
             try

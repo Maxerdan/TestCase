@@ -10,11 +10,15 @@ namespace Testcase
         public static void CheckForExceptions(string expression)
         {
             var exceptionsDictionary = new Dictionary<string, string>() {
-                {@"[\.+\-*\/]{2,}", "OperationException! - Can't parse:\n"},
-                {@"[^\d\.+\-*\/()]+", "ParseException! - Unknown symbols:\n"},
-                {@"\.[+\-*\/()]", "ParseException! - Unfinished number:\n"},
-                {@"\A[+*\/]{1}", "StartException! - Expression starts with the: "},
-                {@"[\.+\-*\/]{1}\Z", "EndException! - Expression ends with the: "}
+                {@"[\.+\-*\/,]{2,}", "OperationException! - Can't parse: "},
+                {@"[^\d\.+\-*\/(),]+", "ParseException! - Unknown symbols: "},
+                {@"\.[+\-*\/()]", "ParseException! - Unfinished number: "},
+                {@",[+\-*\/()]", "ParseException! - Unfinished number: "},
+                {@"\A[+*\/\.,]{1}", "StartException! - Expression starts with the: "},
+                {@"[\.+\-*\/,]{1}\Z", "EndException! - Expression ends with the: "},
+                {@"[\d]\(", "ParseException! - Can't parse: "},
+                {@"\)[\d]", "ParseException! - Can't parse: "},
+                {@"\(\)", "ParseException! - Can't parse: "}
             };
 
             foreach (var exc in exceptionsDictionary)

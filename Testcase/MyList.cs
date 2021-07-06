@@ -19,7 +19,23 @@ namespace Testcase
             _count = 0;
         }
 
-        public T this[int index] { get => _items[index]; set => _items[index] = value; }
+        public T this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= _items.Length)
+                    throw new IndexOutOfRangeException();
+
+                return _items[index];
+            }
+            set
+            {
+                if (index < 0 || index >= _items.Length)
+                    throw new IndexOutOfRangeException();
+
+                _items[index] = value;
+            }
+        }
 
         public int Count => _count;
 
@@ -38,6 +54,7 @@ namespace Testcase
         {
             _items = new T[_size];
             _count = 0;
+            GC.Collect();
         }
 
         public bool Contains(T item)
@@ -52,6 +69,9 @@ namespace Testcase
 
         public void CopyTo(T[] array, int arrayIndex)
         {
+            if (arrayIndex < 0 || arrayIndex > array.Length || array.Length - arrayIndex < Count)
+                throw new IndexOutOfRangeException();
+
             for (int i = 0; i < Count; i++)
             {
                 array.SetValue(_items[i], arrayIndex++);
@@ -111,7 +131,7 @@ namespace Testcase
                 _items[i] = _items[i + 1];
             }
             _count--;
-            if (Count == _items.Length)
+            if (Count == _items.Length / 2)
                 HalveSize();
         }
 
